@@ -30,10 +30,14 @@ module Middleman
           # Skip other blogs' resources
           next unless match_blog(res, md)
 
+          locale = res.path.split('/', 2)[0].to_sym
+
           # "articles" local variable is populated by Calendar and Tag page generators
           # If it's not set then use the complete list of articles
           # TODO: Some way to allow the frontmatter to specify the article filter?
-          articles = md[:locals]["articles"] || @blog_controller.data.articles
+          articles = md[:locals]["articles"] || @blog_controller.data.articles.select do |article|
+            article.locale == locale
+          end
 
           # Allow blog.per_page and blog.page_link to be overridden in the frontmatter
           per_page  = md[:page][:per_page] || @per_page
